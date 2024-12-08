@@ -20,20 +20,20 @@ echo "check md5hash"
 ACTUAL_HASH=$(md5sum ${POPPLER_FILE} | awk '{print $1}')
 
 if [ "$ACTUAL_HASH" == "$EXPECTED_HASH" ]; then
-  echo "Die Datei ist in Ordnung. Hash stimmt überein."
+  echo "File is ok, Hash agrees."
 else
-  echo "Fehler: Hash stimmt nicht überein!"
+  echo "Error: Hash do not agree!"
   echo "Erwarteter Hash: $EXPECTED_HASH"
   echo "Berechneter Hash: $ACTUAL_HASH"
   exit 1
 fi
 
-echo "Untarring ${${POPPLER_FILE}} into ${INSTALL_DIR}"
+echo "Untarring ${POPPLER_FILE} into ${INSTALL_DIR}"
 
 mkdir -p $INSTALL_DIR
 tar -xvf ${POPPLER_FILE} -C $INSTALL_DIR
 
-echo "Complete!"
+echo "Poppler Complete!"
 
 echo "Building runtime environment for poppler"
 mkdir -p $BUILD_DIR/.profile.d
