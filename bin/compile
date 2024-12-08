@@ -1,6 +1,11 @@
 #!/bin/bash
 BUILD_DIR=$1
 
+POPPLER_VERSION=24.12.0
+POPPLER_FILE="poppler-${POPPLER_VERSION}.tar.xz"
+POPPLER_URL="https://poppler.freedesktop.org/${POPPLER_FILE}"
+EXPECTED_HASH=5afb55bfa03ca9a4d0c2d9783eef54f2
+
 INSTALL_DIR=$BUILD_DIR/vendor/poppler
 
 ENVSCRIPT=$BUILD_DIR/.profile.d/poppler.sh
@@ -8,10 +13,25 @@ ENVSCRIPT=$BUILD_DIR/.profile.d/poppler.sh
 # Single quotes since we want $HOME to be resolved at runtime, not build time.
 POPPLER_DIR='${HOME}/vendor/poppler'
 
-echo "Untarring poppler.tar.xz into ${INSTALL_DIR}"
+echo "download poppler in Version: ${POPPLER_VERSION}"
+curl -O ${POPPLER_URL}
+
+echo "check md5hash"
+ACTUAL_HASH=$(md5sum ${POPPLER_FILE} | awk '{print $1}')
+
+if [ "$ACTUAL_HASH" == "$EXPECTED_HASH" ]; then
+  echo "Die Datei ist in Ordnung. Hash stimmt überein."
+else
+  echo "Fehler: Hash stimmt nicht überein!"
+  echo "Erwarteter Hash: $EXPECTED_HASH"
+  echo "Berechneter Hash: $ACTUAL_HASH"
+  exit 1
+fi
+
+echo "Untarring ${${POPPLER_FILE}} into ${INSTALL_DIR}"
 
 mkdir -p $INSTALL_DIR
-tar -xvf poppler-23.10.0.tar.xz -C $INSTALL_DIR
+tar -xvf ${POPPLER_FILE} -C $INSTALL_DIR
 
 echo "Complete!"
 
