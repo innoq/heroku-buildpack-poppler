@@ -15,11 +15,17 @@ ENVSCRIPT=$BUILD_DIR/.profile.d/poppler.sh
 # Single quotes since we want $HOME to be resolved at runtime, not build time.
 POPPLER_DIR='${HOME}/vendor/poppler'
 
-echo "download poppler in Version: ${POPPLER_VERSION}"
+echo "-----> download poppler in Version: ${POPPLER_VERSION}"
 curl -O ${POPPLER_FILE_URL}
 curl -O ${POPPLER_SIG_URL}
 
-echo "check md5hash"
+echo "-----> Importing Poppler release key"
+gpg --batch --import "$(dirname "$0")/../keys/poppler-aacid.asc"
+
+echo "-----> Verifying Poppler signature"
+gpg --batch --verify "$POPPLER_SIG" "$POPPLER_FILE"
+
+echo "-----> Check md5hash"
 ACTUAL_HASH=$(md5sum ${POPPLER_FILE} | awk '{print $1}')
 
 if [ "$ACTUAL_HASH" == "$EXPECTED_HASH" ]; then
@@ -31,14 +37,14 @@ else
   exit 1
 fi
 
-echo "Untarring ${POPPLER_FILE} into ${INSTALL_DIR}"
+echo "-----> Untarring ${POPPLER_FILE} into ${INSTALL_DIR}"
 
 mkdir -p $INSTALL_DIR
 tar -xvf ${POPPLER_FILE} -C $INSTALL_DIR
 
-echo "Poppler Complete!"
+echo " -----> Poppler Complete!"
 
-echo "Building runtime environment for poppler"
+echo "-----> Building runtime environment for poppler"
 mkdir -p $BUILD_DIR/.profile.d
 echo "export PATH=\"$POPPLER_DIR/bin:\$PATH\"" > $ENVSCRIPT
 echo "export LD_LIBRARY_PATH=\"$POPPLER_DIR/lib:\$LD_LIBRARY_PATH\"" >> $ENVSCRIPT
