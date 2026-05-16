@@ -4,6 +4,8 @@ BUILD_DIR=$1
 POPPLER_VERSION=26.05.0
 POPPLER_FILE="poppler-${POPPLER_VERSION}.tar.xz"
 POPPLER_FILE_URL="https://poppler.freedesktop.org/${POPPLER_FILE}"
+POPPLER_SIG="${POPPLER_FILE}.sig"
+POPPLER_SIG_URL="https://poppler.freedesktop.org/${POPPLER_SIG}"
 EXPECTED_HASH=a72c09e41a0c743a8154f36c5bb14354
 
 INSTALL_DIR=$BUILD_DIR/vendor/poppler
@@ -15,6 +17,7 @@ POPPLER_DIR='${HOME}/vendor/poppler'
 
 echo "download poppler in Version: ${POPPLER_VERSION}"
 curl -O ${POPPLER_FILE_URL}
+curl -O ${POPPLER_SIG_URL}
 
 echo "check md5hash"
 ACTUAL_HASH=$(md5sum ${POPPLER_FILE} | awk '{print $1}')
